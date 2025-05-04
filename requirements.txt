@@ -1,0 +1,7 @@
+streamlit
+yfinance
+openai
+newspaper3k
+requests
+beautifulsoup4
+lxml
