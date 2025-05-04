@@ -2,7 +2,6 @@ import yfinance as yf
 import openai
 import requests
 import xml.etree.ElementTree as ET
-from newspaper import Article
 from bs4 import BeautifulSoup
 import re
 import streamlit as st
@@ -26,6 +25,17 @@ def format_currency(n):
         return f"${n:,.0f}"
 
 # ✅ Google News RSS + Article Extraction
+# ✅ Google News RSS + Article Extraction (Streamlit Cloud Compatible)
+def extract_main_text_from_url(url):
+    try:
+        page = requests.get(url, timeout=10)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        paragraphs = soup.find_all('p')
+        text = '\n'.join(p.get_text() for p in paragraphs)
+        return text.strip()[:2000]
+    except Exception:
+        return ""
+
 def get_article_texts(company_name, count=3):
     search_query = company_name.replace(" ", "+") + "+stock"
     url = f"https://news.google.com/rss/search?q={search_query}&hl=en-IN&gl=IN&ceid=IN:en"
@@ -43,22 +53,17 @@ def get_article_texts(company_name, count=3):
             title = BeautifulSoup(title_raw, "html.parser").get_text()
             description = BeautifulSoup(description_raw, "html.parser").get_text()
 
-            try:
-                article = Article(link)
-                article.download()
-                article.parse()
-                if article.text and len(article.text.strip()) > 200:
-                    articles.append(article.text.strip())
-                elif description:
-                    articles.append(description)
-                else:
-                    articles.append(title)
-            except Exception:
-                articles.append(description if description else title)
+            main_text = extract_main_text_from_url(link)
+            if main_text:
+                articles.append(main_text)
+            elif description:
+                articles.append(description)
+            else:
+                articles.append(title)
     except Exception as e:
         st.error(f"Error fetching news: {e}")
     return articles
-
+    
 # ✅ GPT Setup
 openai.api_key = st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else ""
 
