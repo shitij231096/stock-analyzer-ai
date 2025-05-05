@@ -151,7 +151,7 @@ if ticker_input:
             st.metric("Profit Margin", f'{info.get("profitMargins") * 100:.2f}%' if info.get("profitMargins") is not None else "N/A")
 
         with col3:
-            st.metric("Debt/Equity", info.get("debtToEquity"))
+            st.metric("Debt/Equity", f'{info.get("debtToEquity") / 100:.2f}' if info.get("debtToEquity") is not None else "N/A")
             st.metric("Revenue (TTM)", format_currency(info.get("totalRevenue")))
             st.metric("Market Cap", format_currency(info.get("marketCap")))
 
