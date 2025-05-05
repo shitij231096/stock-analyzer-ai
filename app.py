@@ -1,5 +1,6 @@
 import yfinance as yf
-import openai
+from openai import OpenAI
+client = OpenAI(api_key=st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else "")
 import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
@@ -26,6 +27,7 @@ def format_currency(n):
 
 # ✅ Google News RSS + Article Extraction
 # ✅ Google News RSS + Article Extraction (Streamlit Cloud Compatible)
+
 def extract_main_text_from_url(url):
     try:
         page = requests.get(url, timeout=10)
@@ -63,21 +65,23 @@ def get_article_texts(company_name, count=3):
     except Exception as e:
         st.error(f"Error fetching news: {e}")
     return articles
-    
-# ✅ GPT Setup
-openai.api_key = st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else ""
 
 def summarize_news(articles):
     combined = "\n\n".join(articles)
-    prompt = f"Summarize the likely impact of the following news articles on the company's stock:\n{combined}\n\nAlso label the sentiment of the overall news as one of the following: Positive, Negative, or Mixed. Return the summary first and then the sentiment in a new line like this:\nSentiment: <label>"
+    prompt = f"""Summarize the likely impact of the following news articles on the company's stock:
+{combined}
 
-    response = openai.ChatCompletion.create(
+Also label the sentiment of the overall news as one of the following: Positive, Negative, or Mixed.
+Return the summary first and then the sentiment in a new line like this:
+Sentiment: <label>"""
+
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=600
     )
 
-    content = response['choices'][0]['message']['content']
+    content = response.choices[0].message.content
     sentiment_line = re.search(r"Sentiment:\s*(Positive|Negative|Mixed)", content, re.IGNORECASE)
     if sentiment_line:
         sentiment = sentiment_line.group(1).capitalize()
@@ -96,13 +100,16 @@ def analyze_financials(info):
         "Debt to Equity": info.get('debtToEquity'),
         "Operating Margin": info.get('operatingMargins')
     }
+
     prompt = f"Analyze the following financial ratios and suggest whether the company appears financially strong or not:\n{metrics}"
-    response = openai.ChatCompletion.create(
+
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=300
     )
-    return response['choices'][0]['message']['content']
+
+    return response.choices[0].message.content
 
 def fetch_stock_data(ticker):
     stock = yf.Ticker(ticker)
