@@ -1,6 +1,6 @@
 import yfinance as yf
-from openai import OpenAI
-client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
+import openai
+openai_client = openai.OpenAI(api_key=st.secrets.get("openai_api_key", ""))
 import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
@@ -75,7 +75,7 @@ Also label the sentiment of the overall news as one of the following: Positive, 
 Return the summary first and then the sentiment in a new line like this:
 Sentiment: <label>"""
 
-    response = client.chat.completions.create(
+    response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=600
@@ -103,7 +103,7 @@ def analyze_financials(info):
 
     prompt = f"Analyze the following financial ratios and suggest whether the company appears financially strong or not:\n{metrics}"
 
-    response = client.chat.completions.create(
+    response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         max_tokens=300
