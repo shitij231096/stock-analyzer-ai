@@ -1,6 +1,6 @@
 import yfinance as yf
 from openai import OpenAI
-client = OpenAI(api_key=st.secrets["openai_api_key"] if "openai_api_key" in st.secrets else "")
+client = OpenAI(api_key=st.secrets.get("openai_api_key", "")) if "openai_api_key" in st.secrets else "")
 import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
