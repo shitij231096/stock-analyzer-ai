@@ -1,13 +1,13 @@
 import streamlit as st
 import yfinance as yf
-import openai
+from openai import OpenAI
 import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime
 
-openai_client = openai.OpenAI(api_key=st.secrets.get("openai_api_key", ""))
+openai_client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
 
 # ✅ Streamlit App Setup
 st.set_page_config(page_title="Stock Analyzer AI", layout="wide")
