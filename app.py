@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime
+import pandas as pd
 
 openai_client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
 
@@ -120,14 +121,21 @@ def fetch_stock_data(ticker):
 # ✅ Load list of tickers with company names for suggestions
 @st.cache_data
 def get_all_tickers():
-    response = requests.get("https://raw.githubusercontent.com/shitij231096/stock-analyzer-ai/main/All_Stock_Listings.csv")
-    lines = response.text.strip().split("\n")
-    return [(line.split(',')[0], line.split(',')[1]) for line in lines[1:]]
+    url = "https://raw.githubusercontent.com/shitij231096/stock-analyzer-ai/main/All_Stock_Listings.csv"
+    df = pd.read_csv(url)
+    df.columns = [col.strip() for col in df.columns]  # Clean up headers
+    return df[['Symbol', 'Company Name', 'Exchange']]
 
 all_companies = get_all_tickers()
 
-# ✅ Autocomplete dropdown using selectbox
-company_options = [f"{name} ({ticker})" for ticker, name in all_companies]
+# ✅ Exchange Filter UI
+exchange_filter = st.sidebar.selectbox("Select Exchange", options=["All", "NSE", "BSE", "NYSE", "NASDAQ"])
+
+# ✅ Filter DataFrame Based on Selection
+filtered_companies = all_companies if exchange_filter == "All" else all_companies[all_companies["Exchange"] == exchange_filter]
+
+# ✅ Dropdown Options
+company_options = [f"{row['Company Name']} ({row['Symbol']})" for _, row in filtered_companies.iterrows()]
 selected_company = st.sidebar.selectbox("Search company name", options=company_options)
 
 ticker_input = selected_company.split("(")[-1].strip(")") if selected_company else ""
@@ -136,8 +144,10 @@ if ticker_input:
     try:
         info = fetch_stock_data(ticker_input)
         company_name = info.get("longName", ticker_input)
+        exchange_name = all_companies[all_companies['Symbol'] == ticker_input]['Exchange'].values[0]
 
-        st.subheader(f"📊 {company_name} ({ticker_input.upper()})")
+        st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
+        st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
         col1, col2, col3 = st.columns(3)
 
         with col1:
