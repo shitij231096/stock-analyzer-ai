@@ -129,7 +129,7 @@ def get_all_tickers():
 all_companies = get_all_tickers()
 
 # ✅ Exchange Filter UI
-exchange_filter = st.sidebar.selectbox("Select Exchange", options=["All", "NSE", "BSE", "NYSE", "NASDAQ"])
+exchange_filter = st.sidebar.selectbox("Select Exchange", options=["NSE", "BSE", "NYSE", "NASDAQ"])
 
 # ✅ Filter DataFrame Based on Selection
 filtered_companies = all_companies if exchange_filter == "All" else all_companies[all_companies["Exchange"] == exchange_filter]
