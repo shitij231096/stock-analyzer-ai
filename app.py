@@ -154,9 +154,9 @@ ticker_input = selected_company.split("(")[-1].strip(")") if selected_company el
 
 if ticker_input:
     try:
-        exchange_name = all_companies[all_companies['Symbol'] == ticker_input]['Exchange'].values[0]
         info = fetch_stock_data(ticker_input)
         company_name = info.get("longName", ticker_input)
+        exchange_name = all_companies[all_companies['Symbol'] == ticker_input]['Exchange'].values[0]
 
         st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
         st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
