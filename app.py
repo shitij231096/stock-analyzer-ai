@@ -8,8 +8,17 @@ import re
 from datetime import datetime
 import pandas as pd
 
+@st.cache_data(ttl=43200)  # cache for 12 hours (43200 seconds)
+def get_usd_inr_rate():
+    try:
+        response = requests.get("https://api.exchangerate.host/latest?base=USD&symbols=INR", timeout=5)
+        data = response.json()
+        return data["rates"]["INR"]
+    except Exception:
+        return 83  # fallback
+
 # ✅ Set exchange rate for INR to USD
-USD_INR_RATE = 83  # update periodically if needed
+USD_INR_RATE = get_usd_inr_rate()
 
 openai_client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
 
