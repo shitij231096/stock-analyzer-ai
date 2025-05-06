@@ -120,7 +120,7 @@ def fetch_stock_data(ticker):
 # ✅ Load list of tickers with company names for suggestions
 @st.cache_data
 def get_all_tickers():
-    response = requests.get("https://raw.githubusercontent.com/shitij231096/stock-analyzer-ai/main/nse.csv")
+    response = requests.get("https://raw.githubusercontent.com/shitij231096/stock-analyzer-ai/main/All_Stock_Listings.csv")
     lines = response.text.strip().split("\n")
     return [(line.split(',')[0], line.split(',')[1]) for line in lines[1:]]
 
