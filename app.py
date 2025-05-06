@@ -8,6 +8,9 @@ import re
 from datetime import datetime
 import pandas as pd
 
+# ✅ Set exchange rate for INR to USD
+USD_INR_RATE = 83  # update periodically if needed
+
 openai_client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
 
 # ✅ Streamlit App Setup
@@ -162,9 +165,17 @@ if ticker_input:
 
         with col3:
             st.metric("Debt/Equity", f'{info.get("debtToEquity") / 100:.2f}' if info.get("debtToEquity") is not None else "N/A")
-            st.metric("Revenue (TTM)", format_currency(info.get("totalRevenue")))
-            st.metric("Market Cap", format_currency(info.get("marketCap")))
+            if exchange_name == "NSE" or exchange_name == "BSE":
+                revenue_usd = info.get("totalRevenue") / USD_INR_RATE if info.get("totalRevenue") else None
+                market_cap_usd = info.get("marketCap") / USD_INR_RATE if info.get("marketCap") else None
+            else:
+                revenue_usd = info.get("totalRevenue")
+                market_cap_usd = info.get("marketCap")
 
+            st.metric("Revenue (TTM)", format_currency(revenue_usd))
+            st.metric("Market Cap", format_currency(market_cap_usd))
+
+        
         st.divider()
         st.subheader("📈 Financial Interpretation")
         st.write(analyze_financials(info))
