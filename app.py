@@ -1,4 +1,7 @@
 import streamlit as st
+# ✅ Streamlit App Setup
+st.set_page_config(page_title="Stock Analyzer AI", layout="wide")
+st.title("📈 Stock Analyzer with GPT-4")
 import yfinance as yf
 from openai import OpenAI
 import requests
@@ -21,10 +24,6 @@ def get_usd_inr_rate():
 USD_INR_RATE = get_usd_inr_rate()
 
 openai_client = OpenAI(api_key=st.secrets.get("openai_api_key", ""))
-
-# ✅ Streamlit App Setup
-st.set_page_config(page_title="Stock Analyzer AI", layout="wide")
-st.title("📈 Stock Analyzer with GPT-4")
 
 # ✅ Format numbers with units
 def format_currency(n):
@@ -154,9 +153,9 @@ ticker_input = selected_company.split("(")[-1].strip(")") if selected_company el
 
 if ticker_input:
     try:
+        exchange_name = all_companies[all_companies['Symbol'] == ticker_input]['Exchange'].values[0]
         info = fetch_stock_data(ticker_input)
         company_name = info.get("longName", ticker_input)
-        exchange_name = all_companies[all_companies['Symbol'] == ticker_input]['Exchange'].values[0]
         
         st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
         st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
