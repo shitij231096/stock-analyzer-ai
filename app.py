@@ -115,6 +115,9 @@ Be specific. Include:
 - product launches or strategic decisions
 - acquisitions, partnerships, or leadership changes
 - any mentioned stock price movement
+- buy the stock or not
+- if buy, then at what price to buy and for how long to hold
+- if sell, then what price to sell and when
 Avoid generic summaries.
 
 Articles:
