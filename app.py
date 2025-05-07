@@ -108,16 +108,15 @@ def get_article_texts(company_name, count=3):
 def summarize_news(articles):
     combined = "\n\n".join(articles)
     prompt = f"""
-You are a stock analyst assistant. Read the following articles related to a specific company and write a concise summary highlighting key developments that directly impact the company's stock.
+You are a stock analyst assistant. Read the following articles related to a specific company and write a summary highlighting key developments that directly impact the company's stock.
 
 Be specific. Include:
 - any earnings or revenue numbers mentioned
 - product launches or strategic decisions
 - acquisitions, partnerships, or leadership changes
 - any mentioned stock price movement
-- buy the stock or not
-- if buy, then at what price to buy and for how long to hold
-- if sell, then what price to sell and when
+- if recommendation to buy the stock, then at what price and how long to hold
+- if recommendation to sell, then what price to sell and when
 Avoid generic summaries.
 
 Articles:
