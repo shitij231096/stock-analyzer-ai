@@ -110,7 +110,7 @@ def analyze_financials(info):
         "ROE": info.get('returnOnEquity'),
         "ROA": info.get('returnOnAssets'),
         "Profit Margin": info.get('profitMargins'),
-        "Debt to Equity": round(info.get('debtToEquity') / 100, 2) if info.get('debtToEquity') is not None else "N/A",
+        "Debt to Equity": round(info.get('debtToEquity'), 2) if info.get('debtToEquity') is not None else "N/A",
         "Operating Margin": info.get('operatingMargins')
     }
 
