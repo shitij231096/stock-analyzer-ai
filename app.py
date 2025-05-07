@@ -261,7 +261,7 @@ if ticker_input:
         
         if articles:
             summary = summarize_news(articles)
-            st.markdown("**🧠 GPT Summary:**")
+            st.markdown("**🧠 AI Summary:**")
             summary_main = summary.split('\nSentiment:')[0].strip()
             st.success(summary_main)
 
