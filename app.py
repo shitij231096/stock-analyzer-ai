@@ -139,8 +139,11 @@ def get_all_tickers():
 
 all_companies = get_all_tickers()
 
+# ✅ Sidebar Info
+st.sidebar.markdown("🔎 *Currently supports NSE, NYSE, and NASDAQ stocks only.*")
+
 # ✅ Exchange Filter UI
-exchange_filter = st.sidebar.selectbox("Select Exchange", options=["NSE", "BSE", "NYSE", "NASDAQ"])
+exchange_filter = st.sidebar.selectbox("Select Exchange", options=["NSE", "NYSE", "NASDAQ"])
 
 # ✅ Filter DataFrame Based on Selection
 filtered_companies = all_companies if exchange_filter == "All" else all_companies[all_companies["Exchange"] == exchange_filter]
@@ -173,7 +176,7 @@ if ticker_input:
 
         with col3:
             st.metric("Debt/Equity", f'{info.get("debtToEquity") / 100:.2f}' if info.get("debtToEquity") is not None else "N/A")
-            if exchange_name == "NSE" or exchange_name == "BSE":
+            if exchange_name == "NSE":
                 revenue_usd = info.get("totalRevenue") / USD_INR_RATE if info.get("totalRevenue") else None
                 market_cap_usd = info.get("marketCap") / USD_INR_RATE if info.get("marketCap") else None
             else:
