@@ -168,7 +168,7 @@ if ticker_input:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("P/E Ratio", f'{info.get("trailingPE"):.2f}' if info.get("P/E Ratio") is not None else "N/A")
+            st.metric("P/E Ratio", f'{info.get("trailingPE"):.2f}' if info.get("trailingPE") is not None else "N/A")
             st.metric("ROE", f'{info.get("returnOnEquity") * 100:.2f}%' if info.get("returnOnEquity") is not None else "N/A")
             st.metric("Operating Margin", f'{info.get("operatingMargins") * 100:.2f}%' if info.get("operatingMargins") is not None else "N/A")
 
