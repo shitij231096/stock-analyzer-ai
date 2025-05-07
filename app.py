@@ -209,10 +209,12 @@ if ticker_input:
         with col1:
             price = info.get("regularMarketPrice")
             prev_close = info.get("previousClose")
+
             if price is not None and prev_close:
                 change = price - prev_close
                 pct_change = (change / prev_close) * 100
-                st.metric("Last Price", f"₹{price:.2f}", f"{change:+.2f} ({pct_change:+.2f}%)")
+                currency_symbol = "₹" if exchange_name == "NSE" else "$"
+                st.metric("Last Price", f"{currency_symbol}{price:.2f}", f"{change:+.2f} ({pct_change:+.2f}%)")
             else:
                 st.metric("Last Price", "N/A")
                 
