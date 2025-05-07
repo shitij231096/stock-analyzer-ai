@@ -107,12 +107,24 @@ def get_article_texts(company_name, count=3):
 
 def summarize_news(articles):
     combined = "\n\n".join(articles)
-    prompt = f"""Summarize the likely impact of the following news articles on the company's stock:
+    prompt = f"""
+You are a stock analyst assistant. Read the following articles related to a specific company and write a concise summary highlighting key developments that directly impact the company's stock.
+
+Be specific. Include:
+- any earnings or revenue numbers mentioned
+- product launches or strategic decisions
+- acquisitions, partnerships, or leadership changes
+- any mentioned stock price movement
+Avoid generic summaries.
+
+Articles:
 {combined}
 
-Also label the sentiment of the overall news as one of the following: Positive, Negative, or Mixed.
-Return the summary first and then the sentiment in a new line like this:
-Sentiment: <label>"""
+Now write a clear, specific summary of the likely impact on the company's stock, followed by a sentiment tag: Positive, Negative, or Mixed.
+Format:
+Summary: <summary text>
+Sentiment: <label>
+"""
 
     response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -120,7 +132,7 @@ Sentiment: <label>"""
         max_tokens=600
     )
 
-    content = response.choices[0].message.content
+    content = response.choices[0].message.content.strip()
     sentiment_line = re.search(r"Sentiment:\s*(Positive|Negative|Mixed)", content, re.IGNORECASE)
     if sentiment_line:
         sentiment = sentiment_line.group(1).capitalize()
