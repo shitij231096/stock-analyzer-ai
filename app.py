@@ -115,14 +115,13 @@ Be specific. Include:
 - product launches or strategic decisions
 - acquisitions, partnerships, or leadership changes
 - any mentioned stock price movement
-- if recommendation to buy the stock, then at what price and how long to hold
-- if recommendation to sell, then what price to sell and when
+- recommendation to buy or sell the stock
 Avoid generic summaries.
 
 Articles:
 {combined}
 
-Now write a clear, specific summary of the likely impact on the company's stock with recommendation to buy or sell (including price and timeline), followed by a sentiment tag: Positive, Negative, or Mixed.
+Now write a clear, specific summary of the likely impact on the company's stock with recommendation to buy or sell, followed by a sentiment tag: Positive, Negative, or Mixed.
 Format:
 Summary: <summary text>
 Sentiment: <label>
