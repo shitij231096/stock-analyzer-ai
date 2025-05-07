@@ -102,16 +102,19 @@ Sentiment: <label>"""
         content = re.sub(r"Sentiment:\s*(Positive|Negative|Mixed)", f"Sentiment: {emoji} {sentiment}", content)
     return content
 
+def safe_round(value):
+    return round(value, 2) if value is not None else "N/A"
+
 def analyze_financials(info):
     metrics = {
         "P/E Ratio": info.get('trailingPE'),
         "Forward P/E": info.get('forwardPE'),
         "Price to Book": info.get('priceToBook'),
-        "ROE": info.get('returnOnEquity'),
-        "ROA": info.get('returnOnAssets'),
-        "Profit Margin": info.get('profitMargins'),
+        "ROE": safe_round(info.get('returnOnEquity') * 100) if info.get('returnOnEquity') is not None else "N/A",
+        "ROA": safe_round(info.get('returnOnAssets') * 100) if info.get('returnOnAssets') is not None else "N/A",
+        "Profit Margin": safe_round(info.get('profitMargins') * 100) if info.get('profitMargins') is not None else "N/A",
         "Debt to Equity": round(info.get('debtToEquity') / 100, 2) if info.get('debtToEquity') is not None else "N/A",
-        "Operating Margin": info.get('operatingMargins')
+        "Operating Margin": safe_round(info.get('operatingMargins') * 100) if info.get('operatingMargins') is not None else "N/A"
     }
 
     prompt = f"Analyze the following financial ratios and suggest whether the company appears financially strong or not:\n{metrics}"
