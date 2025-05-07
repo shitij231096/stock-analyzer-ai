@@ -53,14 +53,14 @@ def extract_main_text_from_url(url):
 
 def is_relevant_article(article_text, company_name):
     prompt = f"""
-The following is a news article about {company_name}:
+You're reviewing a news article mentioning {company_name}:
 
 {article_text}
 
-Determine if this article is directly about {company_name}'s own operations, performance, announcements, products, strategy, earnings, or business decisions. 
-Do NOT consider it relevant if it's just a mention (e.g., {company_name} awarded a contract to someone else).
+Decide if this article directly discusses {company_name}'s own business operations, performance, products, leadership, strategy, financials, or major announcements. 
+If {company_name} is only *briefly mentioned* in a minor role (e.g., giving a contract or mentioned as a market peer), it's **not** relevant.
 
-Answer with "Yes" or "No" only.
+Reply only with "Yes" if the article *primarily focuses on* {company_name}. Reply "No" otherwise.
 """
 
     try:
@@ -98,8 +98,8 @@ def get_article_texts(company_name, count=3):
 
             content = main_text if main_text else (description if description else title)
 
-            if main_text and is_relevant_article(main_text, company_name):
-                articles.append(main_text)
+            if content and is_relevant_article(content, company_name):
+                articles.append(content)
 
     except Exception as e:
         st.error(f"Error fetching news: {e}")
