@@ -228,6 +228,13 @@ if ticker_input:
             for i, article in enumerate(articles, 1):
                 st.markdown(f"**Article {i}:** {article[:300]}...")
 
+        if articles:
+            with st.expander("📰 View Raw Articles Pulled", expanded=True):
+                for i, article in enumerate(articles, 1):
+                    st.markdown(f"**Article {i}:**\n\n{article[:800]}...\n\n---")
+        else:
+            st.info("No relevant articles were found.")
+        
         summary = summarize_news(articles)
         st.markdown("**🧠 GPT Summary:**")
         summary_main = summary.split('\nSentiment:')[0].strip()
