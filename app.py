@@ -207,7 +207,15 @@ if ticker_input:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("Last Price", f'₹{info.get("regularMarketPrice"):.2f}' if info.get("regularMarketPrice") is not None else "N/A")
+            price = info.get("regularMarketPrice")
+            prev_close = info.get("previousClose")
+            if price is not None and prev_close:
+                change = price - prev_close
+                pct_change = (change / prev_close) * 100
+                st.metric("Last Price", f"₹{price:.2f}", f"{change:+.2f} ({pct_change:+.2f}%)")
+            else:
+                st.metric("Last Price", "N/A")
+                
             st.metric("P/E Ratio", f'{info.get("trailingPE"):.2f}' if info.get("trailingPE") is not None else "N/A")
             st.metric("ROE", f'{info.get("returnOnEquity") * 100:.2f}%' if info.get("returnOnEquity") is not None else "N/A")
             st.metric("Operating Margin", f'{info.get("operatingMargins") * 100:.2f}%' if info.get("operatingMargins") is not None else "N/A")
