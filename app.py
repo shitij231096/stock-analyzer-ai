@@ -247,14 +247,17 @@ if ticker_input:
         else:
             st.info("No relevant articles were found.")
         
-        summary = summarize_news(articles)
-        st.markdown("**🧠 GPT Summary:**")
-        summary_main = summary.split('\nSentiment:')[0].strip()
-        st.success(summary_main)
+        if articles:
+            summary = summarize_news(articles)
+            st.markdown("**🧠 GPT Summary:**")
+            summary_main = summary.split('\nSentiment:')[0].strip()
+            st.success(summary_main)
 
-        sentiment_match = re.search(r"Sentiment:\s*(🟢|🔴|🟡)\s*(Positive|Negative|Mixed)", summary)
-        if sentiment_match:
-            st.info(f"Sentiment: {sentiment_match.group(1)} {sentiment_match.group(2)}")
+            sentiment_match = re.search(r"Sentiment:\s*(🟢|🔴|🟡)\s*(Positive|Negative|Mixed)", summary)
+            if sentiment_match:
+                st.info(f"Sentiment: {sentiment_match.group(1)} {sentiment_match.group(2)}")
+        else:
+            st.warning("No summary generated as no relevant articles were found.")
 
     except Exception as e:
         st.error(f"Failed to load data: {e}")
