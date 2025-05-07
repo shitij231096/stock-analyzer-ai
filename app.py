@@ -51,6 +51,29 @@ def extract_main_text_from_url(url):
     except Exception:
         return ""
 
+def is_relevant_article(article_text, company_name):
+    prompt = f"""
+The following is a news article about {company_name}:
+
+{article_text}
+
+Determine if this article is directly about {company_name}'s own operations, performance, announcements, products, strategy, earnings, or business decisions. 
+Do NOT consider it relevant if it's just a mention (e.g., {company_name} awarded a contract to someone else).
+
+Answer with "Yes" or "No" only.
+"""
+
+    try:
+        response = openai_client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=2
+        )
+        result = response.choices[0].message.content.strip()
+        return result.lower().startswith("yes")
+    except:
+        return False
+
 def get_article_texts(company_name, count=3):
     search_query = company_name.replace(" ", "+") + "+stock"
     url = f"https://news.google.com/rss/search?q={search_query}&hl=en-IN&gl=IN&ceid=IN:en"
@@ -60,21 +83,24 @@ def get_article_texts(company_name, count=3):
         response = requests.get(url)
         root = ET.fromstring(response.content)
         items = root.findall(".//item")
-        for item in items[:count]:
+
+        for item in items:
+            if len(articles) >= count:
+                break
+
             link = item.find("link").text
             title_raw = item.find("title").text.strip()
             description_raw = item.find("description").text.strip() if item.find("description") is not None else ""
 
             title = BeautifulSoup(title_raw, "html.parser").get_text()
             description = BeautifulSoup(description_raw, "html.parser").get_text()
-
             main_text = extract_main_text_from_url(link)
-            if main_text:
+
+            content = main_text if main_text else (description if description else title)
+
+            if main_text and is_relevant_article(main_text, company_name):
                 articles.append(main_text)
-            elif description:
-                articles.append(description)
-            else:
-                articles.append(title)
+
     except Exception as e:
         st.error(f"Error fetching news: {e}")
     return articles
