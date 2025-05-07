@@ -168,12 +168,12 @@ if ticker_input:
         col1, col2, col3 = st.columns(3)
 
         with col1:
-            st.metric("P/E Ratio", info.get("trailingPE"))
+            st.metric("P/E Ratio", f'{info.get("trailingPE"):.2f}' if info.get("P/E Ratio") is not None else "N/A")
             st.metric("ROE", f'{info.get("returnOnEquity") * 100:.2f}%' if info.get("returnOnEquity") is not None else "N/A")
             st.metric("Operating Margin", f'{info.get("operatingMargins") * 100:.2f}%' if info.get("operatingMargins") is not None else "N/A")
 
         with col2:
-            st.metric("Price/Book", info.get("priceToBook"))
+            st.metric("Price/Book", f'{info.get("priceToBook"):.2f}' if info.get("priceToBook") is not None else "N/A")
             st.metric("ROA", f'{info.get("returnOnAssets") * 100:.2f}%' if info.get("returnOnAssets") is not None else "N/A")
             st.metric("Profit Margin", f'{info.get("profitMargins") * 100:.2f}%' if info.get("profitMargins") is not None else "N/A")
 
