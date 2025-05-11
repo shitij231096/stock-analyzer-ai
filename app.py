@@ -213,14 +213,13 @@ if ticker_input:
         st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
         st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
         
-        # Show a brief (5-sentence) company description
+        # Show a concise, 60-word company description
         description = info.get("longBusinessSummary", "")
         if description:
-            # Split into sentences and take the first five
-            sentences = description.replace('\n', ' ').split('. ')
-            brief = '. '.join(sentences[:5]).strip()
-            if not brief.endswith('.'):
-                brief += '.'
+            words = description.replace('\n', ' ').split()
+            brief = ' '.join(words[:60]).strip()
+            if len(words) > 60:
+                brief += '…'
             st.write(brief)
         
         col1, col2, col3 = st.columns(3)
