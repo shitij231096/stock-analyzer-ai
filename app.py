@@ -19,6 +19,16 @@ def analyze_financials_cached(info_json):
 def summarize_news_cached(articles_list):
     return summarize_news(articles_list)
 
+@st.cache_data(ttl=43200, show_spinner=False)
+def summarize_description(desc_text: str):
+    prompt = f"Summarize the following company description in about 60 words, keeping full sentences and key points:\n\n{desc_text}"
+    response = openai_client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=200
+    )
+    return response.choices[0].message.content.strip()
+
 @st.cache_data(ttl=43200)  # cache for 12 hours (43200 seconds)
 def get_usd_inr_rate():
     try:
@@ -213,14 +223,13 @@ if ticker_input:
         st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
         st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
         
-        # Show a concise, 60-word company description
+        # Show a GPT-generated ~60-word company description
         description = info.get("longBusinessSummary", "")
         if description:
-            words = description.replace('\n', ' ').split()
-            brief = ' '.join(words[:60]).strip()
-            if len(words) > 60:
-                brief += '…'
-            st.write(brief)
+            with st.spinner("Summarizing company profile…"):
+                brief_desc = summarize_description(description)
+            st.write(brief_desc)
+
         
         col1, col2, col3 = st.columns(3)
 
