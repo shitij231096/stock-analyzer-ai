@@ -134,6 +134,7 @@ Be specific. Include:
 - acquisitions, partnerships, or leadership changes
 - any mentioned stock price movement
 - recommendation to buy or sell the stock
+- Take geo-political tensions into account
 Avoid generic summaries.
 
 Articles:
