@@ -212,6 +212,12 @@ if ticker_input:
         
         st.subheader(f"📊 {company_name} ({ticker_input.upper()}) - {exchange_name}")
         st.caption(f"Exchange: {exchange_name} | Ticker: {ticker_input.upper()}")
+        
+        # Show company description
+        description = info.get("longBusinessSummary", None)
+        if description:
+            st.write(description)
+        
         col1, col2, col3 = st.columns(3)
 
         with col1:
