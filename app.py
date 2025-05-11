@@ -11,6 +11,14 @@ import re
 from datetime import datetime
 import pandas as pd
 
+@st.cache_data(ttl=43200, show_spinner=False)
+def analyze_financials_cached(info_json):
+    return analyze_financials(info_json)
+
+@st.cache_data(ttl=43200, show_spinner=False)
+def summarize_news_cached(articles_list):
+    return summarize_news(articles_list)
+
 @st.cache_data(ttl=43200)  # cache for 12 hours (43200 seconds)
 def get_usd_inr_rate():
     try:
@@ -161,7 +169,7 @@ def analyze_financials(info):
     response = openai_client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=300
+        max_tokens=600
     )
 
     return response.choices[0].message.content
@@ -242,7 +250,9 @@ if ticker_input:
         
         st.divider()
         st.subheader("📈 Financial Interpretation")
-        st.write(analyze_financials(info))
+        with st.spinner("Analyzing financial metrics…"):
+            interpretation = analyze_financials_cached(info)
+        st.write(interpretation)
 
         st.divider()
         st.subheader("📰 Recent News Analysis")
@@ -260,8 +270,10 @@ if ticker_input:
             st.info("No relevant articles were found.")
         
         if articles:
-            summary = summarize_news(articles)
+            with st.spinner("Summarizing recent news…"):
+                summary = summarize_news_cached(articles)
             st.markdown("**🧠 AI Summary:**")
+            
             summary_main = summary.split('\nSentiment:')[0].strip()
             st.success(summary_main)
 
