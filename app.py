@@ -125,14 +125,14 @@ def get_article_texts(company_name, count=3):
 
 def get_market_summary(company_exchange, count: int = 1):
     """
-    Fetches the top ‘market closed’ summary articles for a given exchange.
+    Fetches the top ‘Closing Bell’ summary articles for a given exchange.
     """
     # 1. pick a site-specific query
     if company_exchange == "NSE":
-        query = "site:economictimes.indiatimes.com market closed summary India"
+        query = "site:moneycontrol.com closing bell summary India"
     else:
         # generic US-market closed summary – you can refine sites
-        query = f"site:moneycontrol.com market closed summary {company_exchange}"
+        query = f"site:cnbc.com USA Closing bell summary USA markets {company_exchange}"
     rss_url = (
         "https://news.google.com/rss/search?"
         f"q={query.replace(' ', '+')}&hl=en-US&gl=US&ceid=US:en"
