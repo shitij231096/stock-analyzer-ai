@@ -123,6 +123,39 @@ def get_article_texts(company_name, count=3):
         st.error(f"Error fetching news: {e}")
     return articles
 
+def get_market_summary(company_exchange, count: int = 1):
+    """
+    Fetches the top ‘market closed’ summary articles for a given exchange.
+    """
+    # 1. pick a site-specific query
+    if company_exchange == "NSE":
+        query = "site:economictimes.indiatimes.com market closed summary India"
+    else:
+        # generic US-market closed summary – you can refine sites
+        query = f"site:moneycontrol.com market closed summary {company_exchange}"
+    rss_url = (
+        "https://news.google.com/rss/search?"
+        f"q={query.replace(' ', '+')}&hl=en-US&gl=US&ceid=US:en"
+    )
+
+    summaries = []
+    try:
+        resp = requests.get(rss_url, timeout=5)
+        root = ET.fromstring(resp.content)
+        items = root.findall(".//item")[:count]
+
+        for item in items:
+            link = item.find("link").text
+            # try to pull some main text, fallback to title/description
+            text = extract_main_text_from_url(link) or (
+                BeautifulSoup(item.find("title").text, "html.parser").get_text()
+            )
+            summaries.append(text)
+    except Exception as e:
+        st.error(f"Market‐summary fetch error: {e}")
+
+    return summaries
+
 def summarize_news(articles):
     combined = "\n\n".join(articles)
     prompt = f"""
@@ -135,7 +168,7 @@ Be specific. Include:
 - any mentioned stock price movement
 - recommendation to buy or sell the stock
 - Take geo-political tensions into account
-Avoid generic summaries.
+- Avoid generic summaries
 
 Articles:
 {combined}
@@ -276,8 +309,14 @@ if ticker_input:
 
         st.divider()
         st.subheader("📰 Recent News Analysis")
+        # 1) Company‐specific articles
         articles = get_article_texts(company_name)
 
+        # 2) One extra “market closed” summary
+        market_articles = get_market_summary(exchange_name, count=1)
+        if market_articles:
+            articles.extend(market_articles)
+        
         with st.expander("View Article Summaries"):
             for i, article in enumerate(articles, 1):
                 st.markdown(f"**Article {i}:** {article[:300]}...")
