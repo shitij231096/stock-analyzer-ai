@@ -129,10 +129,10 @@ def get_market_summary(company_exchange, count: int = 1):
     """
     # 1. pick a site-specific query
     if company_exchange == "NSE":
-        query = "site:moneycontrol.com closing bell summary India"
+        query = "site:https://www.moneycontrol.com/news/business/stocks/ closing bell summary India"
     else:
         # generic US-market closed summary – you can refine sites
-        query = f"site:cnbc.com USA Closing bell summary USA markets {company_exchange}"
+        query = f"site:https://www.cnbc.com/closing-bell/ USA Closing bell summary USA markets {company_exchange}"
     rss_url = (
         "https://news.google.com/rss/search?"
         f"q={query.replace(' ', '+')}&hl=en-US&gl=US&ceid=US:en"
